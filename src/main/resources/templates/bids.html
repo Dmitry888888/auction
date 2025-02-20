@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Place Bid</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/placeBid.css}" />
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Page Title -->
+            <h1 class="text-center" th:text="'Product Title: ' + ${product.title}">Default Title</h1>
+
+            <!-- Error or Success Messages -->
+            <div th:if="${errorMessage != null}" class="alert alert-danger text-center" role="alert">
+                <p th:text="${errorMessage}"></p>
+            </div>
+            <div th:if="${successMessage != null}" class="alert alert-success text-center" role="alert">
+                <p th:text="${successMessage}"></p>
+            </div>
+
+            <!-- Bid Form -->
+            <form th:action="@{/bids/{id}(id=${product.id})}" method="post" class="mt-4">
+                <div class="mb-3">
+                    <label for="bidAmount" class="form-label">Enter Your Bid Amount:</label>
+                    <input type="number" id="bidAmount" name="bidAmount" class="form-control"
+                           th:min="${product.startPrice}" th:value="${product.currentPrice}" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Place Bid</button>
+            </form>
+
+            <!-- Back to Lot List -->
+            <div class="mt-4 text-center">
+                <a th:href="@{/products}" class="btn btn-secondary w-100">Back to Product List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

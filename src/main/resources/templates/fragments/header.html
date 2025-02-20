@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header">
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <!-- Navbar Toggler -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Content -->
+        <div class="collapse navbar-collapse" id="topNavbar">
+            <ul class="navbar-nav">
+                <!-- Home Link -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Home</a>
+                </li>
+
+                <!-- Users Link -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/users}">Users</a>
+                </li>
+
+                <!-- Register New User Link -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/registerNewUser}">Register New User</a>
+                </li>
+
+                <!-- Products Link -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/products}">Products</a>
+                </li>
+
+                <!-- Add Product Link -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/products/new}">Add Product</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>

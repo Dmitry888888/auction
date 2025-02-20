@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Access Denied</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/accessDenied.css}" />
+  </head>
+  <body>
+
+  <!-- Access Denied Container -->
+  <div class="access-denied-container">
+    <h1 class="text-danger">Access Denied</h1>
+    <p class="lead">You do not have permission to access this page.</p>
+    <a th:href="@{/login}" class="btn btn-primary">Go to Login Page</a>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+  <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  </body>
+</html>

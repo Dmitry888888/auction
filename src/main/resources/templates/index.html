@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Start Page</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/startPage.css}" />
+</head>
+<body>
+
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
+         role="alert">
+        [[${message}]]
+        <button type="button" class="close btn-sm" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+<div class="container">
+
+    <!-- Centered Menu -->
+    <div class="menu">
+        <h1 class="welcome-message">Welcome to My App</h1>
+        <a class="nav-link" th:href="@{/users}">Users</a>
+        <a class="nav-link" th:href="@{/registerNewUser}">Register New User</a>
+        <a class="nav-link" th:href="@{/products}">Products</a>
+        <a class="nav-link" th:href="@{/products/new}">Add Product</a>
+
+        <!-- Login/Logout Links -->
+        <div class="login-section">
+            <a class="login-link" th:if="${!#authorization.expression('isAuthenticated()')}" th:href="@{/login}">Login</a>
+            <form th:if="${#authorization.expression('isAuthenticated()')}" th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

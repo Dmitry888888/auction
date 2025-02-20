@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Please Log In</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+</head>
+<body>
+<div class="login-container">
+    <h1>Please Log In</h1>
+
+    <!-- Error Message -->
+    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        Invalid username or password.
+    </div>
+
+    <!-- Logout Message -->
+    <div th:if="${param.logout}" class="alert alert-success" role="alert">
+        You have been logged out successfully.
+    </div>
+
+    <!-- Login Form -->
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required />
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Log in</button>
+        <p class="mt-2 text-center">Good things may happen!</p>
+    </form>
+
+    <!-- Logout Form (Optional) -->
+<!--    style="display: none;"-->
+    <form th:action="@{/logout}" method="post" >
+        <input type="submit" value="Logout" class="btn btn-danger" />
+    </form>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

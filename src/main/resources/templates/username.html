@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    <script  th:inline="javascript">-->
+<!--    function greetWorld() {-->
+<!--        alert("hello world")-->
+<!--    }-->
+
+<!--    function salute(name) {-->
+<!--        alert("hello: " + name)-->
+<!--    }-->
+<!--</script>-->
+    <script th:inline="javascript"
+
+            src="js/custom.js"></script>
+</head>
+<body>
+<div sec:authorize="hasAuthority('ADMIN')">
+    Authenticated as <span sec:authentication="name"></span>
+</div>
+<div >
+    Authenticated as <span sec:authentication="name"></span>
+</div>
+
+<button type="button" th:onclick="showAlert()">Show Alert</button>
+<!--<button th:onclick="'javascript:alert(\'There are exactly ' + ${totalStudents} + ' students\');'">using javascript:function</button>-->
+<!--<script type="text/javascript"   th:src="@{/js/custom.js}"></script>-->
+
+</body>
+
+</html>

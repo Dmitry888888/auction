@@ -5,5 +5,6 @@ import auction.model.CustomUserDetails;
 
 public interface UserRepository extends JpaRepository<CustomUserDetails, Long> {
     CustomUserDetails findByUsername(String username);
+
     boolean existsByUsername(String username);
 }

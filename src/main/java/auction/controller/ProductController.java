@@ -1,60 +1,32 @@
 package auction.controller;
 
-import auction.model.Bid;
+import auction.exception.ProductNotFoundException;
 import auction.model.Product;
-import auction.repository.BidRepository;
-import auction.repository.ProductRepository;
-import auction.repository.UserRepository;
+import auction.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ProductController {
-
     @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private UserRepository customUserRepository;
-    @Autowired
-    private BidRepository bidRepository;
+    public ProductService productService; // for test
 
     @GetMapping("/products")
-    public String getAll1(Model model, @Param("keyword") String keyword ) {
-
-        try {
-
-            List<Product> products = new ArrayList<Product>();
-
-            if (keyword == null) {
-                productRepository.findAll().forEach(products::add);
-            } else {
-                productRepository.findByTitleContainingIgnoreCase(keyword).forEach(products::add);;
-                model.addAttribute("keyword", keyword);
-            }
-
-              List<Bid> bids = bidRepository.findAll();
-              model.addAttribute("products", products);
-              model.addAttribute("bids", bids);
-        } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
-        }
-
+    public String getAllProducts(Model model, @RequestParam(required = false) String keyword) {
+        List<Product> products = productService.searchProducts(keyword); // Use the service to fetch products
+        model.addAttribute("products", products);
+        model.addAttribute("keyword", keyword); // Add keyword to the model if present
         return "products";
     }
-
 
     @GetMapping("/products/new")
     public String addProduct(Model model) {
@@ -62,129 +34,82 @@ public class ProductController {
         product.setPublished(false);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication != null && authentication.isAuthenticated()) {
-            String userName = authentication.getName(); // Retrieves the username
-            Long userId = customUserRepository.findByUsername(userName).getId();
-            System.out.println(userName + "   =   " + userId);
-
-            model.addAttribute("userName", userName); // Adds the username to the model
+            model.addAttribute("userName", authentication.getName()); // Add the username to the model
         }
-            model.addAttribute("product", product);
-            model.addAttribute("pageTitle", "Create new product");
 
+        model.addAttribute("product", product);
+        model.addAttribute("pageTitle", "Create new product");
         return "product_form";
     }
+
     @PostMapping("/products/save")
     public String saveProduct(Product product, RedirectAttributes redirectAttributes, @RequestParam("file") MultipartFile file) {
-        try {
-
-              if( file.getBytes().length > 0 ) {
-                    file.getBytes();
-                    System.out.println(file.getContentType()+file.getSize());
-                    product.setBytes(file.getBytes());
-              }
-              if( product.getCurrentPrice() == null ) {
-                    product.setCurrentPrice(product.getStartPrice());
-               }
-
-                productRepository.save(product);
-
-                redirectAttributes.addFlashAttribute("message", "The Product has been saved successfully!");
-        } catch (Exception e) {
-                redirectAttributes.addAttribute("message", e.getMessage());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            product.setUsername(authentication.getName()); // Set the username
         }
 
+        productService.saveProduct(product, file); // Delegate saving logic to the service
+        redirectAttributes.addFlashAttribute("message", "The Product has been saved successfully!");
         return "redirect:/products";
     }
 
     @GetMapping("/products/{id}")
     public String editProduct(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-              Product product = productRepository.findById(id).get();
-
-              Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-              String currentUserUsername = authentication.getName();
-
-              // Check if the current user is the product owner or has the ADMIN role
-              boolean isAdmin = authentication.getAuthorities().stream()
-                          .anyMatch(authority -> authority.getAuthority().equals("ADMIN") );
-              boolean isOwner = product.getUsername().equals(currentUserUsername);
-
-              if (!isAdmin && !isOwner) {
-                  redirectAttributes.addFlashAttribute("message", "You do not have permission to edit this product.");
-                  return "redirect:/products";
-              }
-
-              model.addAttribute("product", product);
-              model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
-
-              return "product_form";
-        } catch (Exception e) {
-
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
-            return "redirect:/products";
-          }
-    }
-
-
-
-    @GetMapping("/products/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            Product product = productRepository.findById(id).get();
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String currentUserUsername = authentication.getName();
-
-            // Check if the current user is the product owner or has the ADMIN role
-            boolean isAdmin = authentication.getAuthorities().stream()
-                      .anyMatch(authority -> authority.getAuthority().equals("ADMIN") );
-            boolean isOwner = product.getUsername().equals(currentUserUsername);
-
-            if (!isAdmin && !isOwner) {
-                  redirectAttributes.addFlashAttribute("message", "You do not have permission to DELETE this product.");
-                  return "redirect:/products";
-            }
-            productRepository.deleteById(id);
-
-            redirectAttributes.addFlashAttribute("message", "The Product with id=" + id + " has been deleted successfully!");
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
+        Optional<Product> optionalProduct = productService.getProductById(id);
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException("Product with ID=" + id + " not found");
         }
 
-      return "redirect:/products";
+        Product product = optionalProduct.get();
+
+        if (!productService.hasPermissionToEdit(product)) {
+            throw new AccessDeniedException("You do not have permission to edit this product.");
+        }
+
+        model.addAttribute("product", product);
+        model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
+        return "product_form";
+    }
+
+    @DeleteMapping("/products/delete/{id}")
+    public String deleteProduct(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        Optional<Product> optionalProduct = productService.getProductById(id);
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException("Product with ID=" + id + " not found");
+        }
+
+        Product product = optionalProduct.get();
+
+        if (!productService.hasPermissionToEdit(product)) {
+            throw new AccessDeniedException("You do not have permission to delete this product.");
+        }
+
+        productService.deleteProduct(id);
+        redirectAttributes.addFlashAttribute("message", "The Product with ID=" + id + " has been deleted successfully!");
+        return "redirect:/products";
     }
 
     @GetMapping("/products/{id}/published/{status}")
     public String updateProductPublishedStatus(@PathVariable("id") Integer id, @PathVariable("status") boolean published,
-                                                Model model, RedirectAttributes redirectAttributes) {
-        try {
-            productRepository.updatePublishedStatus(id, published);
+                                               RedirectAttributes redirectAttributes) {
+        productService.updatePublishedStatus(id, published); // Delegate status update logic to the service
 
-                String status = published ? "published" : "disabled";
-                String message = "The Product id=" + id + " has been " + status;
-
-                redirectAttributes.addFlashAttribute("message", message);
-
-        } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-        }
+        String status = published ? "published" : "disabled";
+        String message = "The Product id=" + id + " has been " + status;
+        redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/products";
     }
-    @GetMapping("/delete/{id}") // deleteImage
+
+    @DeleteMapping("/deleteImage/{id}") // deleteImage
     public String deleteImage(@PathVariable("id") Integer id) {
-        try {
-            productRepository.deleteImage(id);
-            System.out.println("done delete");
-        } catch (Exception e) {
-            System.out.println("done ex");
-        }
-        return "redirect:/products/{id}";
-    }
-    @GetMapping("/access-denied")
-    public String accessDenied() {
-      return "/access-denied";
+        productService.deleteImage(id); // Delegate image deletion logic to the service
+        return "redirect:/products/" + id;
     }
 
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "/access-denied";
+    }
 }

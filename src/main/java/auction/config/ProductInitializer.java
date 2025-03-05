@@ -25,8 +25,8 @@ public class ProductInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Check if products already exist to avoid duplicates
         if (productRepository.count() == 0) {
-            createProductForUser("adminTest", "static/images/product1.png", "Product 1", "This is the first product.", new BigDecimal("100.00"), new BigDecimal("150.00"));
-            createProductForUser("userTest", "static/images/product2.png", "Product 2", "This is the second product.", new BigDecimal("200.00"), new BigDecimal("250.00"));
+            createProductForUser("adminTest", "static/images/product1.jpg", "Product 1", "This is the first product.", new BigDecimal("100.00"), new BigDecimal("100.00"));
+            createProductForUser("userTest", "static/images/product2.jpg", "Product 2", "This is the second product.", new BigDecimal("200.00"), new BigDecimal("200.00"));
         }
     }
 

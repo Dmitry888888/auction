@@ -190,7 +190,16 @@
 			<version>1.6.3</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 	<!-- SpringResourceTemplateResolver automatically integrates with Spring's own -->

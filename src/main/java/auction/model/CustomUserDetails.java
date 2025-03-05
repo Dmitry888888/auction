@@ -19,14 +19,12 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class CustomUserDetails implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 128, nullable = false)
     private String username;
-
 
     @Column
     private String password;
@@ -37,8 +35,9 @@ public class CustomUserDetails implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserEmailImage> emails;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Authority> authorities;
 
@@ -46,20 +45,20 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(role); // это должно быть, иначе не будет прав
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-    public Long getId() {
-        return id;
     }
 
     @PreUpdate
@@ -71,5 +70,10 @@ public class CustomUserDetails implements UserDetails {
             }
         }
     }
+    public Long getId() {
+        return id;
+    }
+
+
 }
 

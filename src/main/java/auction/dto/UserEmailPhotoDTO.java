@@ -9,11 +9,11 @@ public class UserEmailPhotoDTO {
     private String email;
     private Role role;
     private boolean enabled;
-
     private byte[] userImage;
 
     // Constructors
-    public UserEmailPhotoDTO() {}
+    public UserEmailPhotoDTO() {
+    }
 
     public UserEmailPhotoDTO(Long id, String username, String email, Role role, boolean enabled, byte[] userImage) {
         this.id = id;
@@ -44,6 +44,7 @@ public class UserEmailPhotoDTO {
     public byte[] getUserImage() {
         return userImage;
     }
+
     public String getImageDataBase64() {
         return Base64.encodeBase64String(this.userImage);
     }

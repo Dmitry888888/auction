@@ -60,3 +60,16 @@
   background: green;
 
 }
+
+.icon-button {
+  background: none; /* Remove background color */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  cursor: pointer; /* Add pointer cursor for interactivity */
+  outline: none; /* Remove focus outline */
+}
+
+/* Optional: Add hover effect for better UX */
+.icon-button:hover {
+  color: red; /* Change icon color on hover */
+}

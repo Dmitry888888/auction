@@ -5,5 +5,7 @@ import auction.model.UserEmailImage;
 
 public interface UserEmailRepository extends JpaRepository<UserEmailImage, Long> {
     UserEmailImage findByEmail(String email);
+
     UserEmailImage findByUserId(Long userId);
+
 }

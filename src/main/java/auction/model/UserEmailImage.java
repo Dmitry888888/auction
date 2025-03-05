@@ -16,9 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Builder
 @AllArgsConstructor
 @Data
-
 public class UserEmailImage {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

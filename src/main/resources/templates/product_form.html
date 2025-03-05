@@ -2,118 +2,147 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
-  <title>Products</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0"/>
+    <title>Products</title>
 
-  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
-  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
-  <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
-  <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 </head>
 
 <body>
-  <div th:replace="fragments/header :: header"></div>
+<div th:replace="fragments/header :: header"></div>
 
-  <div class="container-fluid">
+<div class="container-fluid">
     <h2 class="text-center">[[${pageTitle}]]</h2>
 
-    <div class="my-3">
-      <form th:action="@{/products/save}" method="post" enctype="multipart/form-data" th:object="${product}"
-        style="max-width: 570px; margin: 0 auto">
+    <!-- Save Form -->
+    <form id="productForm" th:action="@{/products/save}" method="post" enctype="multipart/form-data"
+          th:object="${product}"
+          style="max-width: 570px; margin: 0 auto">
 
-        <input type="hidden"  th:field="*{id}" />
+        <input type="hidden" th:field="*{id}"/>
         <input type="hidden" id="username" name="username" th:value="${userName}"/>
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/> <!-- Add CSRF token -->
 
         <div class="p-3">
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="title">Title</label>
-            <div class="col-sm-9">
-              <input type="text" th:field="*{title}" required minlength="2" maxlength="128" class="form-control"
-                id="title" />
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="title">Title</label>
+                <div class="col-sm-9">
+                    <input type="text" th:field="*{title}" required minlength="2" maxlength="128" class="form-control"
+                           id="title"/>
+                </div>
             </div>
-          </div>
 
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="description">Description</label>
-            <div class="col-sm-9">
-              <input type="text" th:field="*{description}" minlength="2" maxlength="256" class="form-control"
-                id="description" />
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="description">Description</label>
+                <div class="col-sm-9">
+                    <input type="text" th:field="*{description}" minlength="2" maxlength="256" class="form-control"
+                           id="description"/>
+                </div>
             </div>
-          </div>
 
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="startPrice">startPrice</label>
-            <div class="col-sm-9">
-              <input type="number" step="1" th:field="*{startPrice}" required min="1"
-                     class="form-control" id="startPrice" />
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="startPrice">Start Price</label>
+                <div class="col-sm-9">
+                    <input type="number" step="1" th:field="*{startPrice}" required min="1"
+                           class="form-control" id="startPrice"/>
+                </div>
             </div>
-          </div>
 
-          <div class="form-group row">
-            <label class="col-sm-3 form-check-label" for="published">Published</label>
-            <div class="col-sm-9">
-              <input type="checkbox" id="published" th:field="*{published}" />
+            <div class="form-group row">
+                <label class="col-sm-3 form-check-label" for="published">Published</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" id="published" th:field="*{published}"/>
+                </div>
             </div>
-          </div>
 
-          <input  type="hidden" th:field="*{bytes}"/>
-          <input type="hidden" th:field="*{currentPrice}"  id="currentPrice" />
+            <input type="hidden" th:field="*{bytes}"/>
+            <input type="hidden" th:field="*{currentPrice}" id="currentPrice"/>
 
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="file">Image</label>
-            <div class="col-sm-9">
-              <input id="file" type="file" name="file"  accept="image/png, image/jpeg"   />
-               <img src="" id="prev" th:src="@{'data:image/jpeg;base64,'+${product.getImageDataBase64()}}" />
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" for="file">Image</label>
+                <div class="col-sm-9">
+                    <input id="file" type="file" name="file" accept="image/png, image/jpeg"/>
+                    <img src="" id="prev" th:src="@{'data:image/jpeg;base64,'+${product.getImageDataBase64()}}"/>
+                </div>
             </div>
-          </div>
+        </div>
+    </form>
 
-          <!--      <input id="input-file" type="file" name="file" accept="image/png, image/jpeg" />-->
-          <div class="text-center">
-
-            <input type="submit" value="Save" class="btn btn-primary btn-sm mr-2" />
-            <input type="button" value="Cancel" id="btnCancel" class="btn btn-secondary btn-sm" />
-            <button id="deleteImageButton" class="btn btn-secondary btn-sm">
-              <a id="deleteImageHl" th:href="@{'/delete/'+ ${product.id}}">delete Image</a>
+    <!-- Action Buttons Group -->
+    <div class="text-center mt-3">
+        <div class="btn-group" role="group" aria-label="Action Buttons">
+            <!-- Save Button -->
+            <button type="button" id="saveButton" class="btn btn-primary action-btn mr-2">
+                Save
             </button>
 
-          </div>
+            <!-- Cancel Button -->
+            <input type="button" value="Cancel" id="btnCancel" class="btn btn-secondary action-btn mr-2"/>
+
+            <!-- Delete Image Form -->
+            <form th:action="@{'/deleteImage/'+ ${product.id}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" class="btn btn-danger action-btn">
+                    Delete Image
+                </button>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
+</div>
 
-
-
-  <div th:replace="fragments/footer :: footer"></div>
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $("#btnCancel").on("click", function () {
-        window.location = "[[@{/products}]]";
-      });
+<script type="text/javascript">
+  $(document).ready(function () {
+    // Handle Cancel Button
+    $("#btnCancel").on("click", function () {
+      window.location = "[[@{/products}]]";
     });
 
-<!--обработка размера файла входящего-->
-    document.getElementsByName('file')[0].addEventListener('change', function(event) {
-<!--        alert("The button was clicked!" + (this.files[0].size/ 1024 / 1024).toFixed(2));-->
+    // Handle Save Button Outside the Form
+    $("#saveButton").on("click", function () {
+      // Perform custom actions before submitting the form
+      if (confirm("Are you sure you want to save this product?")) {
+        // Example: Log form data before submission
+        console.log("Saving product with title:", $("#title").val());
+        console.log("Saving product with description:", $("#description").val());
 
-        const size =
-               (this.files[0].size / 1024 / 1024).toFixed(2);
+        // Validate file size before submission
+        const fileInput = document.getElementById('file');
+        if (fileInput.files.length > 0) {
+          const fileSizeMB = (fileInput.files[0].size / 1024 / 1024).toFixed(2);
+          if (fileSizeMB > 1) {
+            alert("File size must be less than 1 MB");
+            return; // Prevent form submission
+          }
+        }
 
-        if (size > 1 ) {
-                alert("File size must be less than1 MB");
-                document.getElementById('file').value= null;
-            } else {
-                  var reader = new FileReader();
-                  reader.onload = function(r_event) {
-                    document.getElementById('prev').setAttribute('src', r_event.target.result);
-                  }
-            reader.readAsDataURL(this.files[0]);
-            }
+        // Submit the product form programmatically
+        $("#productForm").submit();
+      }
     });
-  </script>
 
+    // File size validation
+    document.getElementsByName('file')[0].addEventListener('change', function (event) {
+      const size = (this.files[0].size / 1024 / 1024).toFixed(2);
+
+      if (size > 1) {
+        alert("File size must be less than 1 MB");
+        document.getElementById('file').value = null;
+      } else {
+        var reader = new FileReader();
+        reader.onload = function (r_event) {
+          document.getElementById('prev').setAttribute('src', r_event.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+  });
+
+
+</script>
 </body>
 
 </html>

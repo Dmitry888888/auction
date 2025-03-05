@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import javax.sql.DataSource;
 
@@ -31,6 +32,7 @@ public class SecurityConfig {
                                 .requestMatchers("/products/new").authenticated()
                                 .requestMatchers("/noModel").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                                .requestMatchers("/images/**").permitAll()
                                 .requestMatchers("/webjars/**").permitAll()
 
                                 .requestMatchers("/").permitAll()
@@ -44,12 +46,15 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // Custom entry point for unauthenticated users
                 )
 
-                .formLogin(form -> form //сработало, но надо html править
+                .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll())
                 .logout((logout) -> logout
                         .logoutSuccessUrl("/")
                         .permitAll())
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // Store CSRF token in cookies
+                )
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -63,4 +68,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

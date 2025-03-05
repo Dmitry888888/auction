@@ -55,6 +55,7 @@
                 <th scope="col">role</th>
                 <th scope="col">userImage</th>
                 <th scope="col">Actions</th>
+                <th scope="col">delete</th>
 
             </tr>
             </thead>
@@ -70,12 +71,18 @@
                     <a th:href="@{'/users/' + ${dto.id}}"             title="Edit this user"
                        class="fa-regular fa-pen-to-square icon-dark"></a>
                     &nbsp;
-                    <a th:href="@{'/users/delete/' + ${dto.id}}" th:userName="${dto.username}" id="btnDelete"
-                       title="Delete this product" class="fa-regular fa-trash-can icon-dark btn-delete" sec:authorize="hasAuthority('ADMIN')"></a>
+<!--                    <a th:href="@{'/users/delete/' + ${dto.id}}" th:userName="${dto.username}" id="btnDelete"-->
+<!--                       title="Delete this product" class="fa-regular fa-trash-can icon-dark btn-delete" sec:authorize="hasAuthority('ADMIN')"></a>-->
                 </td>
 
-                &nbsp;
-
+                <td>
+                    <!-- Delete Form -->
+                    <form th:action="@{'/users/delete/' + ${dto.id}}" method="post" class="user-delete-form">
+                        <input type="hidden" name="_method" value="delete" />
+                        <button type="submit" class="fa-regular fa-trash-can icon-dark icon-button" title="Delete this user"
+                                sec:authorize="hasAuthority('ADMIN')" th:attr="data-user-name=${dto.username}"></button>
+                    </form>
+                </td>
 
             </tr>
             </tbody>
@@ -85,5 +92,20 @@
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Handle delete button click
+        $(".btn-delete").on("click", function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            const form = $(this).closest(".user-delete-form"); // Find the parent form
+            const username = $(this).attr("data-user-name"); // Get the username for confirmation
+
+            if (confirm("Are you sure you want to delete the user '" + username + "'?")) {
+                form.submit(); // Submit the form if confirmed
+            }
+        });
+    });
+</script>
 </body>
 </html>

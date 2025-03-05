@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -14,12 +15,9 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "bids")
 public class Bid {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -28,6 +26,8 @@ public class Bid {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "products_id", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Product product;
+
+    private BigDecimal amount;
 
     private boolean cancelled = false; // Поле для отмены ставки
 

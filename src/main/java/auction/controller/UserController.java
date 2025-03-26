@@ -92,7 +92,7 @@ public class UserController {
             LOGGER.warn("Error saving user: {}", e.getMessage());
             throw new RuntimeException("Error saving user: " + e.getMessage(), e); // Let the global handler manage this
         }
-        return "redirect:/users";
+        return "redirect:/login";
     }
 
     @DeleteMapping("/users/delete/{id}")

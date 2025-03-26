@@ -3,6 +3,7 @@ package auction.controller.exception;
 import auction.exception.ErrorResponse;
 import auction.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -21,12 +22,12 @@ public class GlobalExceptionHandlerTest {
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleRuntimeException(ex);
 
         // Assert
-        assertEquals(500, response.getStatusCodeValue());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Something went wrong", response.getBody().getMessage());
     }
 
     @Test
-    public void testHandleIllegalArgumentException() {
+    public void testHandleIllegalArgumentException() { // методы можно писать test можно не писать
         // Arrange
         IllegalArgumentException ex = new IllegalArgumentException("Invalid input");
 
@@ -34,7 +35,7 @@ public class GlobalExceptionHandlerTest {
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleIllegalArgumentException(ex);
 
         // Assert
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCodeValue()); // использовать константы
         assertEquals("Invalid input", response.getBody().getMessage());
     }
 

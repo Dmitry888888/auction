@@ -20,7 +20,7 @@ public class ProductControllerTest {
     private ProductController productController;
 
     @Mock
-    private ProductService productService;
+    private ProductService productService; // сделал сервис делаешь данные входное замоканные, одна строка где вызываешь метод которы протестировать и щзатем assert результат тот который нужен
 
     @BeforeEach
     public void setUp() {
@@ -40,9 +40,14 @@ public class ProductControllerTest {
         String result = productController.deleteProduct(productId, redirectAttributes);
 
         // Assert
-        assertEquals("redirect:/products", result);
-        verify(redirectAttributes, times(1)).addFlashAttribute(eq("message"), eq("The Product with id=1 has been deleted successfully!"));
-        verify(productService, times(1)).deleteProduct(productId);
+        assertAll(
+                () -> assertEquals("redirect:/products", result),
+                () -> verify(redirectAttributes).addFlashAttribute(eq("message"), eq("The Product with id=1 has been deleted successfully!")), // times(1) можно писать если отличное от единицы количество
+                () ->         verify(productService, times(1)).deleteProduct(productId) // и так, все что нужно 1 секция все жданные
+        );
+
+
+
     }
 
     @Test

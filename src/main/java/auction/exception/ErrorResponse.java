@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.exception;
 
 public class ErrorResponse {

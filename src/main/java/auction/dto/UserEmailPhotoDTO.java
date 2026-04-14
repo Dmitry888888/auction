@@ -1,5 +1,6 @@
 package auction.dto;
 
+// checked by qwen
 import auction.model.Role;
 import org.apache.tomcat.util.codec.binary.Base64;
 

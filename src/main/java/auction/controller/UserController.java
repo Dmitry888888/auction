@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.controller;
 
 import auction.dto.UserEmailPhotoDTO;

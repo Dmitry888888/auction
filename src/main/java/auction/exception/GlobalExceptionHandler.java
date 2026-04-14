@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.exception;
 
 import org.slf4j.Logger;

@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.model;
 
 import jakarta.persistence.*;

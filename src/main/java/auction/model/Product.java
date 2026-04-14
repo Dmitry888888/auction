@@ -1,5 +1,7 @@
 package auction.model;
 
+// it is Qwen, hello!
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;

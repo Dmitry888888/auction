@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.config;
 
 import auction.model.Product;

@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.repository;
 
 import auction.model.Bid;

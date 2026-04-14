@@ -1,3 +1,4 @@
+// checked by qwen
 package auction.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,3 +1,4 @@
+// checked by qwen
 function showAlert() {
     alert("The button was clicked!");
 }
